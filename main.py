@@ -30,14 +30,18 @@ def register_weather_data(data):
     in database and Builds a relationship with city and weather
 
     all data we are getting from open weather site:param data:json
-    None:return:None
+    message:return:string
     """
     city = models.City(id=data['city']['id'], city_name=data['city']['name'],
                        country=data['city']['country'],
                        coord_lat=data['city']['coord']['lat'], coord_lon=data['city']['coord']['lon'])
     """register data in data base"""
-    session.add(city)
-    session.commit()
+    condition = session.query(models.City).filter_by(id=data['city']['id']).first()
+    if not condition:
+        session.add(city)
+        session.commit()
+    else:
+        return 'this data be Register in past'
 
     for forecast in data['list']:
         weather = models.Weather(date=forecast['dt_txt'][0:10], time=forecast['dt_txt'][11:19],
@@ -49,6 +53,7 @@ def register_weather_data(data):
         session.commit()
     """close connection"""
     session.close()
+    return 'data registered successfully'
 
 
 """connection to data base"""
@@ -62,5 +67,6 @@ for lat_long_step in lat_long:
         response = request_api(lat_long_step)
         if response.status_code == 200:
             result = response.json()
-            register_weather_data(result)
+            print(register_weather_data(result))
             break
+print('done')
