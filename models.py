@@ -13,8 +13,6 @@ engine = create_engine(os.environ.get("DATABASE_URL"))
 Base = declarative_base()
 
 """my model for designing DataBase"""
-
-
 class City(Base):
     """City model for stored cities data"""
     __tablename__ = 'city'
@@ -27,6 +25,23 @@ class City(Base):
     def __repr__(self):
         return f'{self.city_name} - {self.country} '
 
+
+class Weather(Base):
+    """Weather model for stored weather data"""
+    __tablename__ = 'weather'
+    # attribute
+    id = Column(Integer, primary_key=True)
+    data = Column(String)
+    time = Column(String)
+    temperature = Column(Float)
+    humidity = Column(Float)
+    wind_speed = Column(Float)
+    # association
+    City = Relationship('Weather', back_populates='city')
+    city_id = Column(Integer, ForeignKey('city.id'))
+
+    def __repr__(self):
+        return f'{self.time} - {self.temperature} - {self.humidity} - {self.wind_speed}'
 
 """Table Builder"""
 Base.metadata.create_all(engine)
