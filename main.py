@@ -57,3 +57,10 @@ engine = create_engine(os.environ.get("DATABASE_URL"))
 Session = sessionmaker(bind=engine)
 session = Session()
 
+for lat_long_step in lat_long:
+    while True:
+        response = request_api(lat_long_step)
+        if response.status_code == 200:
+            result = response.json()
+            register_weather_data(result)
+            break
