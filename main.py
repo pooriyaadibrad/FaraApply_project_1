@@ -71,4 +71,4 @@ if __name__ == '__main__':
                 result = response.json()
                 print(register_weather_data(result))
                 break
-    print('done')
+    print('Done fetching data')
