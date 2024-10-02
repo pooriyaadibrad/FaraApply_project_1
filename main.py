@@ -84,3 +84,28 @@ if __name__ == '__main__':
                       } for city in cities
                       )
     print(df)
+    """list of all weather information in data frame"""
+    # fetching cities data from data base
+    weather_info = session.query(models.Weather).all()
+    for city in cities:
+        df_1 = pd.DataFrame({
+                                'date': w.date,
+                                'time': w.time,
+                                'temperature': w.temperature,
+                                'humidity': w.humidity,
+                                'wind_speed': w.wind_speed,
+                                'city_name': city.city_name
+                            } for w in weather_info
+                            )
+        """ 
+        with this query we can define want 24h data of every city
+        select_24h is only int data 
+        """
+        try:
+            select_24h = session.query(models.Weather).filter_by(date=str(datetime.date.today())).filter_by(
+                city_id=session.query(models.City).all()[0].id).all()
+        except ValueError:
+            print('in register city we have problem')
+            select_24h=0
+
+        print(df_1.head(len(select_24h)+1))
