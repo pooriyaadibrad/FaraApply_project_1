@@ -87,6 +87,7 @@ if __name__ == '__main__':
     """list of all weather information in data frame"""
     # fetching cities data from data base
     weather_info = session.query(models.Weather).all()
+    all_weather_every_city=[]
     for city in cities:
         df_1 = pd.DataFrame({
                                 'date': w.date,
@@ -109,3 +110,8 @@ if __name__ == '__main__':
             select_24h=0
 
         print(df_1.head(len(select_24h)+1))
+        # with this code caching every cities data that fetching from database
+        all_weather_every_city.append(df_1)
+    """represent to us all weather information in database for every city"""
+    for w_1 in all_weather_every_city:
+        print(w_1)
