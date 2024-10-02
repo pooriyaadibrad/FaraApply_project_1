@@ -4,7 +4,8 @@ from sqlalchemy.orm import sessionmaker
 import os
 import requests
 import models
-
+import pandas as pd
+import datetime
 # access to environment variable
 load_dotenv()
 # get api token for request to https://openweathermap.org/
@@ -62,7 +63,6 @@ engine = create_engine(os.environ.get("DATABASE_URL"))
 Session = sessionmaker(bind=engine)
 session = Session()
 
-
 if __name__ == '__main__':
     for lat_long_step in lat_long:
         while True:
@@ -72,3 +72,15 @@ if __name__ == '__main__':
                 print(register_weather_data(result))
                 break
     print('Done fetching data')
+
+    """list of all cities in data frame"""
+    # fetching cities data from data base
+    cities = session.query(models.City).all()
+    df = pd.DataFrame({
+                          'city_name': city.city_name,
+                          'country': city.country,
+                          'coord_lat': city.coord_lat,
+                          'coord_lon': city.coord_lon,
+                      } for city in cities
+                      )
+    print(df)
