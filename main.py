@@ -6,14 +6,35 @@ import requests
 import models
 import pandas as pd
 import datetime
+
 # access to environment variable
 load_dotenv()
 # get api token for request to https://openweathermap.org/
 api_key = os.environ.get('API_KEY')
 # selected data with specific Latitude and Longitude
+"""
+my data i get from introduce site 
 lat_long = [(51.507351, -0.127758), (53.408371, -2.991573), (40.712776, -74.005974), (41.874316, -87.631724),
             (38.893883, -77.044142), (43.686677, -79.392166), (49.243843, -123.112445), (35.689133, 51.389524),
             (36.470552, 52.348881), (36.545611, 52.684186), (48.136583, 11.572022), (49.461167, 11.071938)]
+"""
+"""
+this excel have 47000 city from all of the world with 
+Latitude and Longitude
+"""
+def select_city():
+    """
+    tuple full of Latitude and Longitude:return:
+    """
+    data = pd.read_excel('worldcities.xlsx', 'Sheet1')
+    latitude_longitude = []
+    counter = 0
+    for i, j in zip(data['lat'], data['lng']):
+        latitude_longitude.append((i, j))
+        counter += 1
+        if counter == count_of_city:
+            break
+    return latitude_longitude
 
 
 def request_api(lat_long_var):
@@ -64,6 +85,8 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 if __name__ == '__main__':
+    count_of_city = int(input('please enter the number of cities you want see weather information: '))
+    lat_long = select_city()
     for lat_long_step in lat_long:
         while True:
             response = request_api(lat_long_step)
@@ -87,7 +110,7 @@ if __name__ == '__main__':
     """list of all weather information in data frame"""
     # fetching cities data from data base
     weather_info = session.query(models.Weather).all()
-    all_weather_every_city=[]
+    all_weather_every_city = []
     for city in cities:
         df_1 = pd.DataFrame({
                                 'date': w.date,
@@ -107,9 +130,9 @@ if __name__ == '__main__':
                 city_id=session.query(models.City).all()[0].id).all()
         except ValueError:
             print('in register city we have problem')
-            select_24h=0
+            select_24h = 0
 
-        print(df_1.head(len(select_24h)+1))
+        print(df_1.head(len(select_24h) + 1))
         # with this code caching every cities data that fetching from database
         all_weather_every_city.append(df_1)
     """represent to us all weather information in database for every city"""
